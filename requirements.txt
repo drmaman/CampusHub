@@ -1,0 +1,20 @@
+# --- Core framework ---
+fastapi
+uvicorn[standard]
+
+# --- MongoDB driver ---
+motor
+
+# --- Seguridad y JWT ---
+python-jose
+passlib[bcrypt]
+
+# --- Variables de entorno ---
+python-dotenv
+
+# --- Validación y modelos ---
+pydantic
+email-validator
+
+# --- Utilidades opcionales ---
+typing-extensions
