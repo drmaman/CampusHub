@@ -25,5 +25,6 @@ async def check_task_deadlines():
         print(f"Tarea {t['_id']} marcada como vencida")
 
 def start_scheduler():
-    scheduler.add_job(check_task_deadlines, "interval", minutes=5)  
+    scheduler.add_job(check_task_deadlines, "interval", minutes=2)  
     scheduler.start()
+
