@@ -1,19 +1,17 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, Form,Response
 from datetime import datetime, timedelta
 from jose import jwt
 from passlib.context import CryptContext
 import os
 from src.db import db
-from src.models.models import LoginRequest, LoginResponse  # 👈 importar modelos
+from src.models.models import LoginResponse
 
 router = APIRouter()
 
-# Configuración JWT
 SECRET = os.getenv("JWT_SECRET", "supersecreto")
 ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_HOURS = 2
 
-# Cifrado de contraseñas
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def verify_password(plain_password, hashed_password):
@@ -27,29 +25,46 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
 
 
 @router.post("/", response_model=LoginResponse)
-async def login(credentials: LoginRequest, request: Request):
-    """
-    Inicia sesión con email y contraseña.
-    Retorna token JWT + nombre + rol + id del usuario.
-    """
-    # Buscar usuario
-    user = await db.users.find_one({"email": credentials.email})
+async def login(
+    response: Response,
+    email: str = Form(""),
+    password: str = Form("")
+):
+    user = await db.users.find_one({"email": email})
     if not user:
         raise HTTPException(status_code=401, detail="Usuario no encontrado")
 
-    # Validar contraseña (puedes cambiar a verify_password si usas hash)
-    if credentials.password != user["password"]:
+    if password != user["password"]:  # usa verify_password si ocupas hash
         raise HTTPException(status_code=401, detail="Contraseña incorrecta")
 
-    # Crear el token
     token_data = {"sub": str(user["_id"]), "role": user["rol"], "email": user["email"]}
     token = create_access_token(token_data)
 
-    # Respuesta del modelo
+    # ✅ Guardar token en cookie
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=False,      # pon True si usas HTTPS
+        samesite="lax",
+        max_age=7200
+    )
+
     return LoginResponse(
         access_token=token,
         token_type="bearer",
         nombre=user["nombre"],
         rol=user["rol"],
-        _id=str(user["_id"])
+        id=str(user["_id"])
     )
+@router.post("/logout")
+async def logout(response: Response):
+    # ✅ borrar cookie del token
+    response.delete_cookie(
+        key="access_token",
+        httponly=True,
+        secure=False,   # pon True si usas HTTPS
+        samesite="lax"
+    )
+
+    return {"message": "Logout exitoso"}

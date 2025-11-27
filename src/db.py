@@ -1,20 +1,16 @@
-# src/db.py
-from motor.motor_asyncio import AsyncIOMotorClient
-from dotenv import load_dotenv
-import os
 
-# Cargar variables del archivo .env
+from motor.motor_asyncio import AsyncIOMotorClient
+import os
+from dotenv import load_dotenv
+
 load_dotenv()
 
-# Obtener valores del entorno
-MONGO_URL = os.getenv("MONGO_URL")
-MONGO_DB = os.getenv("MONGO_DB")
+# Leer variables del .env
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+MONGO_DB_NAME = "CampusHub"
 
-if not MONGO_URL or not MONGO_DB:
-    raise ValueError(" No se encontraron las variables MONGO_URL o MONGO_DB en el .env")
+# Cliente MongoDB
+client = AsyncIOMotorClient(MONGO_URI)
 
-# Conexión a MongoDB
-client = AsyncIOMotorClient(MONGO_URL)
-db = client[MONGO_DB]
-
-print(f" Conectado a la base de datos: {MONGO_DB}")
+# Base de datos
+db = client[MONGO_DB_NAME]
