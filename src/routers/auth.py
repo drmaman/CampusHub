@@ -40,7 +40,7 @@ async def login(
     token_data = {"sub": str(user["_id"]), "role": user["rol"], "email": user["email"]}
     token = create_access_token(token_data)
 
-    # ✅ Guardar token en cookie
+    # Guardar token en cookie
     response.set_cookie(
         key="access_token",
         value=token,
@@ -59,7 +59,7 @@ async def login(
     )
 @router.post("/logout")
 async def logout(response: Response):
-    # ✅ borrar cookie del token
+    # borrar cookie del token
     response.delete_cookie(
         key="access_token",
         httponly=True,
@@ -68,3 +68,4 @@ async def logout(response: Response):
     )
 
     return {"message": "Logout exitoso"}
+
