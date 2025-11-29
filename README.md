@@ -175,7 +175,7 @@ pydantic
 | Nombre | Rol | Tareas |
 |--------|------|--------|
 | Alejandro Adame | Backend & MongoDB | Modelado, CRUD, Atlas |
-| DIEGO JULIAN | Plan de índices & Índices creados | reporte de explain(), Benchmark de índices y Manual técnico |
+| DIEGO JULIAN | Plan de índices & Índices creados | reporte de explain(), Benchmark de índices, Manual técnico y manual de usuario|
 
 ---
 
