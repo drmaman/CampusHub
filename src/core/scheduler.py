@@ -27,4 +27,3 @@ async def check_task_deadlines():
 def start_scheduler():
     scheduler.add_job(check_task_deadlines, "interval", minutes=2)  
     scheduler.start()
-

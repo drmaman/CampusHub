@@ -22,13 +22,13 @@ async def get_team(team_id: str):
     team["_id"] = str(team["_id"])
     return team
 
-@router.post("/")
+@router.post("/",response_model=list[TeamModel])
 async def create_team(
     nombre: str = Form("", description="nombre del equipo"),
     curso_id: str = Form("", description="id del curso"),
-    integrantes: List[str] = Form("",description="email de los integrantes"),   
+    integrantes: List[str] = Form(...,description="email de los integrantes"),   
     proyecto: str = Form("", description="nombre del proyecto")
-):
+    ):
     
     try:
         curso = await db.courses.find_one({"_id": ObjectId(curso_id)})
@@ -42,6 +42,7 @@ async def create_team(
             status_code=401,
             detail=f"El curso no existe"
         )
+    
     miembros_id = []
     for email in integrantes:
         email_list = [e.strip() for e in email.split(",") if e.strip()]
@@ -76,6 +77,7 @@ async def create_team(
     result = await db.teams.insert_one(team_dict)
     team_dict["_id"] = str(result.inserted_id)
     task_id = str(result.inserted_id)
+
     update_result = await db.courses.update_one(
         {"_id": ObjectId(curso_id)},
         {"$push": {"equipos": task_id}}

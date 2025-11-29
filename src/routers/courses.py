@@ -100,10 +100,6 @@ async def update_course(
     tareas: Optional[List[str]] = Form([]),
     user: dict = Depends(require_profesor)
 ):
-    profesor_id = user["username"]
-    profesor_email = user["email"]
-    profesor = await db.users.find_one({"_id": ObjectId(profesor_id)})
-    profesor_nombre = profesor["nombre"]
     
     
     estudiantes_id = []
@@ -137,9 +133,6 @@ async def update_course(
     course_dict = {
         "nombre": nombre,
         "descripcion": descripcion,
-        "profesor_id": profesor_id,
-        "profesor_nombre": profesor_nombre,
-        "profesor_email": profesor_email,
         "max_estudiantes": max_estudiantes,
         "estudiantes": estudiantes,
         "equipos": equipos,
