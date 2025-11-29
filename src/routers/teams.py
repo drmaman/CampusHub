@@ -89,7 +89,7 @@ async def update_team(
     team_id: str,
     nombre: str = Form("", description="nombre del equipo"),
     curso_id: str = Form("", description="id del curso"),
-    integrantes: List[str] = Form("", description="email de los integrantes"),
+    integrantes: List[str] = Form(..., description="email de los integrantes"),
     proyecto: str = Form("", description="nombre del proyecto")
 ):
     try:
@@ -152,3 +152,4 @@ async def delete_team(team_id: str):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     return {"message": "Equipo eliminado correctamente"}
+
