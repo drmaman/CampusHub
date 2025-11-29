@@ -15,11 +15,11 @@ auth_scheme = HTTPBearer()
 async def get_current_user(request: Request):
     token = None
 
-    # ✅ Primero intenta leer cookie
+    # Primero intenta leer cookie
     if "access_token" in request.cookies:
         token = request.cookies.get("access_token")
     else:
-        # ✅ Fallback: header Authorization
+        # Fallback: header Authorization
         auth_header = request.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
             token = auth_header.split(" ")[1]
@@ -68,3 +68,4 @@ async def require_estudiante(user: dict = Depends(get_current_user)):
             detail="Solo los estudiantes pueden acceder a este recurso"
         )
     return user
+
