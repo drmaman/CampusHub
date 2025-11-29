@@ -1,20 +1,31 @@
-# --- Core framework ---
+# Requirements for CampusHub API
+# FastAPI & ASGI Server
 fastapi
 uvicorn[standard]
 
-# --- MongoDB driver ---
-motor
+# MongoDB
+motor==3.3.2
+pymongo==4.5.0
 
-# --- Seguridad y JWT ---
-python-jose
+# Authentication & Security
+python-jose[cryptography]
 passlib[bcrypt]
+python-multipart
 
-# --- Variables de entorno ---
-python-dotenv
+# Scheduling
+apscheduler
 
-# --- Validación y modelos ---
+# Data Validation
 pydantic
-email-validator
+pydantic-extra-types
 
-# --- Utilidades opcionales ---
-typing-extensions
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+pytest-cov==4.1.0
+httpx==0.25.2
+
+# Development (optional)
+black==23.11.0
+flake8==6.1.0
+python-dateutil==2.8.2
