@@ -69,7 +69,7 @@ class CourseMode2(BaseModel):
 class TeamModel(BaseModel):
     nombre: str
     curso_id: str
-    miembros: List[str]
+    integrantes: List[str]
     miembros_total: int = 0
     proyecto: Optional[str] = None
     fecha_creacion: Optional[datetime] = None
@@ -80,7 +80,7 @@ class TeamMode2(BaseModel):
     id: str = Field(..., alias="_id")
     nombre: str
     curso_id: str
-    miembros: List[str]
+    integrantes: List[str]
     miembros_total: int = 0
     proyecto: Optional[str] = None
 
@@ -155,4 +155,5 @@ class FeedbackMode2(BaseModel):
     profesor_id: str
     comentario: Optional[str] = None
     calificacion: Optional[float] = None
+
     fecha: datetime = Field(default_factory=datetime.utcnow)
