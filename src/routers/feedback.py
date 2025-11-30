@@ -83,16 +83,16 @@ async def update_feedback(
     user: dict = Depends(require_profesor)
 ):
     try:
-        tarea = await db.courses.find_one({"tareas": tarea_id})
+        tarea = await db.feedback.find_one({"_id": ObjectId(feedback_id)})
     except:
         raise HTTPException(
             status_code=401,
-            detail=f"La tarea no existe"
+            detail=f"La retroalimentacion no existe"
         )
     if not tarea:
         raise HTTPException(
             status_code=401,
-            detail=f"La tarea no existe"
+            detail=f"La retroalimentacion no existe"
         )
     try:
         envio = await db.tasks.find_one({"entregas": submission_id})
@@ -132,4 +132,5 @@ async def delete_feedback(feedback_id: str,user: dict = Depends(require_profesor
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Retroalimentación no encontrada")
     return {"message": "Retroalimentación eliminada correctamente"}
+
 
