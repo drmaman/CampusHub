@@ -4,12 +4,12 @@ from src.db import db
 from bson import ObjectId
 from typing import Literal
 from datetime import datetime
-from src.core.security import require_admin
+from src.core.security import require_admin,require_todos
 router = APIRouter()
 
 # Listar todos los usuarios
 @router.get("/", response_model=list[UserMode2])
-async def get_users():
+async def get_users(user: dict = Depends(require_todos)):
     users = await db.users.find().to_list(100)
     for user in users:
         user["_id"] = str(user["_id"])
@@ -17,7 +17,7 @@ async def get_users():
 
 # Obtener usuario por ID
 @router.get("/{user_id}", response_model=UserModel)
-async def get_user(user_id: str):
+async def get_user(user_id: str,user: dict = Depends(require_todos)):
     user = await db.users.find_one({"_id": ObjectId(user_id)})
     if not user:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
@@ -97,4 +97,5 @@ async def delete_user(user_id: str, user: dict = Depends(require_admin)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return {"message": "Usuario eliminado correctamente"}
+
 
