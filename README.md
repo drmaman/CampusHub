@@ -73,6 +73,8 @@ Realizar entregas de tareas
 ## Administrador
 Gestionar todos los usuarios
 
+Tiene acceso a todos los recursos
+
 ### Endpoints Principales
 
 ## Autenticación
