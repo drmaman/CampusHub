@@ -23,7 +23,7 @@ async def get_team(team_id: str,user: dict = Depends(require_todos)):
     team["_id"] = str(team["_id"])
     return team
 
-@router.post("/",response_model=list[TeamModel])
+@router.post("/")
 async def create_team(
     nombre: str = Form("", description="nombre del equipo"),
     curso_id: str = Form("", description="id del curso"),
@@ -155,6 +155,7 @@ async def delete_team(team_id: str,user: dict = Depends(require_todos)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     return {"message": "Equipo eliminado correctamente"}
+
 
 
 
