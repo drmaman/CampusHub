@@ -46,12 +46,13 @@ async def get_current_user(request: Request):
 
 # Dependencia para verificar si el usuario es profesor
 async def require_profesor(user: dict = Depends(get_current_user)):
-    if user["role"] != "profesor":
+    if user["role"] not in ["profesor", "Administrador"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Solo los profesores pueden acceder a este recurso"
+            detail="Solo los profesores o administradores pueden acceder a este recurso"
         )
     return user
+# Dependencia para verificar si el usuario es administrador
 async def require_admin(user: dict = Depends(get_current_user)):
     if user["role"] != "Administrador":
         raise HTTPException(
@@ -62,10 +63,19 @@ async def require_admin(user: dict = Depends(get_current_user)):
 
 # Dependencia para verificar si el usuario es estudiante
 async def require_estudiante(user: dict = Depends(get_current_user)):
-    if user["role"] != "estudiante":
+    if user["role"] not in ["estudiante", "Administrador"]:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Solo los estudiantes pueden acceder a este recurso"
+            detail="Solo los estudiantes o administradores pueden acceder a este recurso"
         )
     return user
+# Dependencia para verificar si el usuario esta logiado
+async def require_todos(user: dict = Depends(get_current_user)):
+    if user["role"] not in ["profesor", "Administrador","estudiante"]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Solo los profesores, administradores o estudiantes pueden acceder a este recurso"
+        )
+    return user
+
 
