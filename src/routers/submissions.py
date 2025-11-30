@@ -4,19 +4,19 @@ from src.models.models import SubmissionModel,SubmissionMode2
 from bson import ObjectId
 from datetime import datetime
 from typing import Optional
-from src.core.security import require_estudiante
+from src.core.security import require_estudiante,require_todos
 
 router = APIRouter()
 
 @router.get("/", response_model=list[SubmissionMode2])
-async def get_submissions():
+async def get_submissions(user: dict = Depends(require_todos)):
     submissions = await db.submissions.find().to_list(100)
     for s in submissions:
         s["_id"] = str(s["_id"])
     return submissions
 
 @router.get("/{submission_id}")
-async def get_submission(submission_id: str):
+async def get_submission(submission_id: str,user: dict = Depends(require_todos)):
     s = await db.submissions.find_one({"_id": ObjectId(submission_id)})
     if not s:
         raise HTTPException(status_code=404, detail="Entrega no encontrada")
@@ -154,3 +154,4 @@ async def delete_submission(submission_id: str,user: dict = Depends(require_estu
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Entrega no encontrada")
     return {"message": "Entrega eliminada correctamente"}
+
