@@ -2,14 +2,14 @@ from fastapi import APIRouter, HTTPException, Depends, Form
 from src.db import db
 from src.models.models import CourseModel, CourseMode2
 from bson import ObjectId
-from src.core.security import require_profesor, require_admin
+from src.core.security import require_profesor,require_todos
 from typing import Optional, List
 from datetime import datetime
 router = APIRouter()
 
 # Todos pueden ver los cursos
 @router.get("/", response_model=list[CourseMode2])
-async def get_courses():
+async def get_courses(user: dict = Depends(require_todos)):
     courses = await db.courses.find().to_list(100)
     for course in courses:
         course["_id"] = str(course["_id"])
@@ -17,7 +17,7 @@ async def get_courses():
 
 #  Todos pueden ver un curso específico
 @router.get("/{course_id}", response_model=CourseModel)
-async def get_course(course_id: str):
+async def get_course(course_id: str,user: dict = Depends(require_todos)):
     course = await db.courses.find_one({"_id": ObjectId(course_id)})
     if not course:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
@@ -158,3 +158,4 @@ async def delete_course(course_id: str, user: dict = Depends(require_profesor)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Curso no encontrado")
     return {"message": "Curso eliminado correctamente"}
+
