@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Form
+from fastapi import APIRouter, HTTPException, Form, Depends
 from src.db import db
 from src.models.models import TeamModel,TeamMode2
 from bson import ObjectId
 from typing import List
 from datetime import datetime
+from src.core.security import require_todos
 
 router = APIRouter()
 
@@ -27,7 +28,8 @@ async def create_team(
     nombre: str = Form("", description="nombre del equipo"),
     curso_id: str = Form("", description="id del curso"),
     integrantes: List[str] = Form(...,description="email de los integrantes"),   
-    proyecto: str = Form("", description="nombre del proyecto")
+    proyecto: str = Form("", description="nombre del proyecto"),
+    user: dict = Depends(require_todos)
     ):
     
     try:
@@ -90,7 +92,8 @@ async def update_team(
     nombre: str = Form("", description="nombre del equipo"),
     curso_id: str = Form("", description="id del curso"),
     integrantes: List[str] = Form(..., description="email de los integrantes"),
-    proyecto: str = Form("", description="nombre del proyecto")
+    proyecto: str = Form("", description="nombre del proyecto"),
+    user: dict = Depends(require_todos)
 ):
     try:
         curso = await db.courses.find_one({"_id": ObjectId(curso_id)})
@@ -147,9 +150,10 @@ async def update_team(
     return {"message": "Equipo actualizado correctamente"}
 
 @router.delete("/{team_id}")
-async def delete_team(team_id: str):
+async def delete_team(team_id: str,user: dict = Depends(require_todos)):
     result = await db.teams.delete_one({"_id": ObjectId(team_id)})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     return {"message": "Equipo eliminado correctamente"}
+
 
