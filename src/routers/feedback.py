@@ -4,18 +4,18 @@ from src.models.models import FeedbackModel,FeedbackMode2
 from bson import ObjectId
 from typing import Optional
 from datetime import datetime
-from src.core.security import require_profesor
+from src.core.security import require_profesor,require_todos
 router = APIRouter()
 
 @router.get("/", response_model=list[FeedbackMode2])
-async def get_feedback():
+async def get_feedback(user: dict = Depends(require_todos)):
     feedbacks = await db.feedback.find().to_list(100)
     for f in feedbacks:
         f["_id"] = str(f["_id"])
     return feedbacks
 
 @router.get("/{feedback_id}", response_model=FeedbackModel)
-async def get_feedback_by_id(feedback_id: str):
+async def get_feedback_by_id(feedback_id: str,user: dict = Depends(require_todos)):
     f = await db.feedback.find_one({"_id": ObjectId(feedback_id)})
     if not f:
         raise HTTPException(status_code=404, detail="Retroalimentación no encontrada")
@@ -132,3 +132,4 @@ async def delete_feedback(feedback_id: str,user: dict = Depends(require_profesor
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Retroalimentación no encontrada")
     return {"message": "Retroalimentación eliminada correctamente"}
+
