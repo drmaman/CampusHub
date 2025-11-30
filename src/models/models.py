@@ -129,7 +129,7 @@ class TaskModel(BaseModel):
     fecha_limite: Optional[datetime]
     estado: str
     fecha_creacion: datetime
-    entrega_id: Optional[str] = None
+    entregas: Optional[List[str]]
 
 class TaskMode2(BaseModel):
     id: str = Field(..., alias="_id")
@@ -138,7 +138,7 @@ class TaskMode2(BaseModel):
     fecha_limite: Optional[datetime]
     estado: str
     fecha_creacion: datetime
-    entrega_id: Optional[str] = None
+    entregas: Optional[List[str]]
 # Retroalimentación
 
 class FeedbackModel(BaseModel):
@@ -157,3 +157,4 @@ class FeedbackMode2(BaseModel):
     calificacion: Optional[float] = None
 
     fecha: datetime = Field(default_factory=datetime.utcnow)
+
