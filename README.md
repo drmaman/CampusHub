@@ -135,7 +135,7 @@ JWT_ALGORITHM="HS256"
 
 ## Instalación
 Clona el repositorio:
-git clone https://github.com/<tu_usuario>/CampusHub.git
+git clone https://github.com/drmaman/CampusHub.git
 cd CampusHub
 ## Instala las dependencias:
 
