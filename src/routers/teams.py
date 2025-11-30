@@ -9,14 +9,14 @@ from src.core.security import require_todos
 router = APIRouter()
 
 @router.get("/", response_model=list[TeamMode2])
-async def get_teams():
+async def get_teams(user: dict = Depends(require_todos)):
     teams = await db.teams.find().to_list(100)
     for team in teams:
         team["_id"] = str(team["_id"])
     return teams
 
 @router.get("/{team_id}", response_model=TeamModel)
-async def get_team(team_id: str):
+async def get_team(team_id: str,user: dict = Depends(require_todos)):
     team = await db.teams.find_one({"_id": ObjectId(team_id)})
     if not team:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
@@ -155,5 +155,6 @@ async def delete_team(team_id: str,user: dict = Depends(require_todos)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     return {"message": "Equipo eliminado correctamente"}
+
 
 
