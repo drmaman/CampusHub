@@ -4,13 +4,13 @@ from bson import ObjectId
 from datetime import datetime
 from typing import Optional, List
 from src.models.models import TaskModel, TaskMode2
-from src.core.security import require_profesor
+from src.core.security import require_profesor,require_todos
 
 router = APIRouter()
 
 # Obtener todas las tareas
 @router.get("/", response_model=list[TaskMode2])
-async def get_tasks():
+async def get_tasks(user: dict = Depends(require_todos)):
     tasks = await db.tasks.find().to_list(100)
     for t in tasks:
         t["_id"] = str(t["_id"])
@@ -18,7 +18,7 @@ async def get_tasks():
 
 # Obtener una tarea específica por ID
 @router.get("/{task_id}", response_model=TaskModel)
-async def get_task(task_id: str):
+async def get_task(task_id: str,user: dict = Depends(require_todos)):
     t = await db.tasks.find_one({"_id": ObjectId(task_id)})
     if not t:
         raise HTTPException(status_code=404, detail="Tarea no encontrada")
@@ -119,3 +119,4 @@ async def delete_task(task_id: str, user: dict = Depends(require_profesor)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Tarea no encontrada")
     return {"message": "Tarea eliminada correctamente"}
+
