@@ -31,7 +31,8 @@ async def create_user(
     nombre: str = Form(""),
     email: str = Form(""),
     password: str = Form(""),
-    rol: Literal["estudiante","profesor","Administrador"] = Form(...)
+    rol: Literal["estudiante","profesor","Administrador"] = Form(...),
+    user: dict = Depends(require_admin)
 ):
     # Validar email único
     existing = await db["users"].find_one({"email": email})
@@ -96,3 +97,4 @@ async def delete_user(user_id: str, user: dict = Depends(require_admin)):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     return {"message": "Usuario eliminado correctamente"}
+
